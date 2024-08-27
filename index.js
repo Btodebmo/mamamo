@@ -3,11 +3,12 @@ const axios = require('axios');
 const cors = require('cors');
 const app = express();
 
-const apiKey = 'sk-e90797785fd74a14923d4412dedf73c0';
-const url = 'https://ffa.chat/api/chat/completions';
+// Middleware
+app.use(cors());  // Enable CORS
+app.use(express.json());
 
-// Enable CORS for all routes
-app.use(cors());
+const apiKey = process.env.API_KEY || 'sk-e90797785fd74a14923d4412dedf73c0';
+const url = 'https://ffa.chat/api/chat/completions';
 
 app.get('/ai', async (req, res) => {
     const question = req.query.ask;
@@ -36,13 +37,13 @@ app.get('/ai', async (req, res) => {
         const response = await axios.post(url, data, { headers });
         res.json(response.data);
     } catch (error) {
+        console.error('API Request Error:', error.response ? error.response.data : error.message);
         res.status(500).send('Error: ' + (error.response ? error.response.data : error.message));
     }
 });
 
+// Start server
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0';  // Allows connections from outside localhost
-
-app.listen(PORT, HOST, () => {
-    console.log(`Server is running on http://${HOST}:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
