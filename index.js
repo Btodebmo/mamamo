@@ -1,9 +1,13 @@
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors');
 const app = express();
 
 const apiKey = 'sk-e90797785fd74a14923d4412dedf73c0';
 const url = 'https://ffa.chat/api/chat/completions';
+
+// Enable CORS for all routes
+app.use(cors());
 
 app.get('/ai', async (req, res) => {
     const question = req.query.ask;
@@ -37,6 +41,8 @@ app.get('/ai', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+const HOST = process.env.HOST || '0.0.0.0';  // Allows connections from outside localhost
+
+app.listen(PORT, HOST, () => {
+    console.log(`Server is running on http://${HOST}:${PORT}`);
 });
